@@ -113,7 +113,6 @@ export default class GolangPlugin extends Plugin {
 
 			function addResp(pre: HTMLPreElement) {
 				let id = "ob-go" + getId();
-				console.log(id)
 				return function (e: Event) {
 					if (section == null) {
 						console.log("section is null");
@@ -134,7 +133,6 @@ export default class GolangPlugin extends Plugin {
 								.join("\n")
 						) +
 						"&withVet=true";
-					console.log(raw);
 
 					var requestOptions: RequestInit = {
 						method: "POST",
@@ -142,7 +140,6 @@ export default class GolangPlugin extends Plugin {
 						body: raw,
 						redirect: "follow",
 					};
-
 					fetch(
 						"http://www.liudel.top/compile?backend=",
 						requestOptions
@@ -150,11 +147,14 @@ export default class GolangPlugin extends Plugin {
 						.then((response) => response.text())
 						.then((result) => {
 							let res = JSON.parse(result);
-							console.log(res, res.Events[0].Message);
-							let text = res.Errors;
-							if (text == "") {
-								text = res.Events[0].Message;
+							let text = "程序无输出";
+							if (res != null) {
+								text = res.Errors;
+								if (text == "") {
+									text = res.Events[0].Message;
+								}
 							}
+					
 							let output = el.querySelectorAll("#" + id);
 							if (output != null) {
 								output.forEach(function (
