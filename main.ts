@@ -133,7 +133,16 @@ export default class GolangPlugin extends Plugin {
 								.join("\n")
 						) +
 						"&withVet=true";
-
+					let output = el.querySelectorAll("#" + id);
+					if (output != null) {
+						output.forEach(function (
+							v: Element,
+							k: number,
+							parent: NodeListOf<Element>
+						) {
+							pre.parentElement?.removeChild(v);
+						});
+					}
 					var requestOptions: RequestInit = {
 						method: "POST",
 						headers: myHeaders,
@@ -147,24 +156,15 @@ export default class GolangPlugin extends Plugin {
 						.then((response) => response.text())
 						.then((result) => {
 							let res = JSON.parse(result);
-							let text = "程序无输出";
-							if (res != null) {
-								text = res.Errors;
-								if (text == "") {
+
+							let text = res.Errors;
+							if (text == "") {
+								text = "程序无输出";
+								if (res.Events != null) {
 									text = res.Events[0].Message;
 								}
 							}
-					
-							let output = el.querySelectorAll("#" + id);
-							if (output != null) {
-								output.forEach(function (
-									v: Element,
-									k: number,
-									parent: NodeListOf<Element>
-								) {
-									pre.parentElement?.removeChild(v);
-								});
-							}
+
 							createRespText(
 								pre.parentElement,
 								id,
