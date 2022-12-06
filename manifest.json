@@ -4,7 +4,7 @@
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "run go code",
-	"author": "wey",
+	"author": "wry",
 	"authorUrl": "https://github.com/Liudel/obsidian-go",
 	"isDesktopOnly": false
 }
