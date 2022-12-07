@@ -174,6 +174,10 @@ export default class GolangPlugin extends Plugin {
 									}
 								}
 
+								if (pre.parentElement == null) {
+									return
+								}
+
 								createRespText(
 									pre.parentElement,
 									id,
