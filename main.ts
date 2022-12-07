@@ -113,65 +113,75 @@ export default class GolangPlugin extends Plugin {
 
 			function addResp(pre: HTMLPreElement) {
 				let id = "ob-go" + getId();
+				let time: NodeJS.Timeout;
 				return function (e: Event) {
-					if (section == null) {
-						console.log("section is null");
-						return;
-					}
+					clearTimeout(time);
 
-					var myHeaders = new Headers();
-					myHeaders.append(
-						"content-type",
-						"application/x-www-form-urlencoded; charset=UTF-8"
-					);
+					time = setTimeout(function () {
+						if (section == null) {
+							console.log("section is null");
+							return;
+						}
 
-					var raw =
-						"version=2&body=" +
-						encodeURIComponent(
-							sectionArr
-								.slice(section.lineStart + 1, section.lineEnd)
-								.join("\n")
-						) +
-						"&withVet=true";
-					let output = el.querySelectorAll("#" + id);
-					if (output != null) {
-						output.forEach(function (
-							v: Element,
-							k: number,
-							parent: NodeListOf<Element>
-						) {
-							pre.parentElement?.removeChild(v);
-						});
-					}
-					var requestOptions: RequestInit = {
-						method: "POST",
-						headers: myHeaders,
-						body: raw,
-						redirect: "follow",
-					};
-					fetch(
-						"http://www.liudel.top/compile?backend=",
-						requestOptions
-					)
-						.then((response) => response.text())
-						.then((result) => {
-							let res = JSON.parse(result);
+						var myHeaders = new Headers();
+						myHeaders.append(
+							"content-type",
+							"application/x-www-form-urlencoded; charset=UTF-8"
+						);
 
-							let text = res.Errors;
-							if (text == "") {
-								text = "程序无输出";
-								if (res.Events != null) {
-									text = res.Events[0].Message;
+						var raw =
+							"version=2&body=" +
+							encodeURIComponent(
+								sectionArr
+									.slice(
+										section.lineStart + 1,
+										section.lineEnd
+									)
+									.join("\n")
+							) +
+							"&withVet=true";
+						let output = el.querySelectorAll("#" + id);
+						if (output != null) {
+							output.forEach(function (
+								v: Element,
+								k: number,
+								parent: NodeListOf<Element>
+							) {
+								pre.parentElement?.removeChild(v);
+							});
+						}
+						var requestOptions: RequestInit = {
+							method: "POST",
+							headers: myHeaders,
+							body: raw,
+							redirect: "follow",
+						};
+
+						console.log("111111111111111");
+						fetch(
+							"http://www.liudel.top/compile?backend=",
+							requestOptions
+						)
+							.then((response) => response.text())
+							.then((result) => {
+								let res = JSON.parse(result);
+
+								let text = res.Errors;
+								if (text == "") {
+									text = "程序无输出";
+									if (res.Events != null) {
+										text = res.Events[0].Message;
+									}
 								}
-							}
 
-							createRespText(
-								pre.parentElement,
-								id,
-								"** OUTPUT **\n\n" + text + "\n"
-							);
-						})
-						.catch((error) => console.log("error", error));
+								createRespText(
+									pre.parentElement,
+									id,
+									"** OUTPUT **\n\n" + text + "\n"
+								);
+							})
+							.catch((error) => console.log("error", error));
+					}, 500);
 				};
 			}
 
